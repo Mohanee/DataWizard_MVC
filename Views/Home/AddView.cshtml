@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "AddView";
+}
+
+<h2>Add New Employee</h2>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+
+                $(document).ready(function () {
+                    FindAddorEdit();
+                });
+
+        function AddEmployee() {
+            var empModel = {
+                EmpId: 0, Name: $('#name').val(), Address: $('#address').val(),
+                PhoneNumber: $('#phonenumber').val()
+            }
+            if (empModel.Name != null && empModel.Address != null && empModel.PhoneNumber != null) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'https://localhost:44374/Employee/AddUpdateEmployee',
+                    dataType: 'JSON',
+                    contentType: 'application/json;charset=utf-8',
+                    data: JSON.stringify(empModel),
+                    success: function (data) {
+                        alert(data);
+                        ResetFunction();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            }
+        }
+
+    
+
+    function EditEmployee(empId) {
+        $.ajax({
+            type: 'POST',
+            url: 'https://localhost:44374/Employee/EditEmployee?id=' + empId,
+            dataType: 'JSON',
+            contentType: 'application/json;charset=utf-8',
+            data: { empId: empId },
+            success: function (data) {
+                $('#name').val(data.Name);
+                $('#address').val(data.Address);
+                $('#phonenumber').val(data.PhoneNumber);
+            },
+            error: function (error) {
+                alert("Error in Editing the employee");
+            }
+        });
+    }
+
+                function FindAddorEdit() {
+                    var val = location.search.slice(1).split("&")[0].split("=")[1];
+                        if (val != 0) {
+                            alert(val);
+                            EditEmployee(val);
+                        }
+                        else {
+                            AddEmployee();
+                        }
+                    
+                }
+        
+    
+
+    function ResetFunction() {
+        $('#name').val("");
+        $('#address').val("");
+        $('#phonenumber').val("");
+    }
+</script>
+
+<form>
+    <table>
+        <tr>
+            <td>
+                Name
+            </td>
+            <td>
+                <input type="text" id="name" required />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Address
+            </td>
+            <td>
+                <input type="text" id="address" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Phone Number
+            </td>
+            <td>
+                <input type="text" id="phonenumber" />
+            </td>
+        </tr>
+        <tr>
+            <td><input type="button" id="btnSave" value="Save" onclick="AddEmployee()"/></td>
+            <td><input type="button" id="btnReset" value="Reset" onclick="ResetFunction()" /></td>
+        </tr>
+    </table>
+</form>
+<br /><hr/>
+<a href="https://localhost:44388/Home/Index">Back to List</a>

@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<html>
+<head>
+
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+            GetAllEmployees();
+        });
+
+        function GetAllEmployees() {
+            $.ajax({
+                type: 'GET',
+                url: 'https://localhost:44374/Employee/GetEmployee',
+                dataType: 'JSON',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    var loadEmployee = "";
+                    $.each(data, function (index, item) {
+                        loadEmployee += '<tr><td>' + item.EmpId + '</td><td>' + item.Name + '</td><td>'
+                            + item.Address + '</td><td>' + item.PhoneNumber + '</td><td><input type="button" value="Edit" id="editbtn" onclick="GotoEditEmployee(' + item.EmpId + ')"/></td > <td><input type="button" value="Delete" onclick="DeleteEmployee(' + item.EmpId+')" id="delbtn" /></td></tr > ';
+                    });
+
+                    $('#emptbl').append(loadEmployee);
+                },
+                error: function (error) {
+                    alert("Error in fetching the employee list");
+                }
+            });
+        }
+
+        function GotoEditEmployee(id) {
+            alert(id);
+            window.location = 'https://localhost:44388/Home/AddView?empId=' + id;
+        }
+
+
+        function DeleteEmployee(empId) {
+            if (confirm("Are you sure you want to delete?")) {
+                
+                $.ajax(
+                    {
+                        type: 'POST',
+                        url: 'https://localhost:44374/Employee/DeleteEmployee?id=' + empId,
+                        dataType: 'JSON',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            alert(data);
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("Error in Deleting the Employee");
+                        }
+                    });
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <h2>Employee Table</h2>
+
+    <table id="emptbl" style="width: 100%; border: 1px solid">
+        <thead>
+            <tr>
+                <th>
+                    EmpId
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Phone Number
+                </th>
+            </tr>
+        </thead>
+    </table>
+</body>
+</html>
